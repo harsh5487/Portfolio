@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{%block title%}Portfolio{%endblock%}
+
+{% block jquery %}
+
+<script>
+$( function() {
+$( "#id_sell_date" ).datepicker({
+  dateFormat: 'yy-mm-dd'
+});
+} );
+</script>
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+      {% csrf_token %}
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        {% if stock.stock_quant > 0 %}
+        <li>{{ form.as_p }}<strong><p class="text-danger">*Quantity not more than {{ stock.stock_quant }}</p></strong><input type="submit" value="Submit" class="btn btn-primary"></li>
+        {% else %}
+        <li><strong>No Shares Owned</strong></li>
+        {% endif %}
+      </ol>
+    </nav>
+    </form>
+{% endblock %}

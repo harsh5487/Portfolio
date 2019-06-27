@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{%block title%}Portfolio{%endblock%}
+{% load static %}
+
+{% block javascript %}
+
+<script>
+var endpoint = '/balance_sheet_data/'
+var Data_balance = []
+var stock_labels = []
+
+$.getJSON({
+	method: "GET",
+	url: endpoint,
+
+	beforeSend: function(){
+		$("#loader").show();
+	},
+
+	success: function(data){
+		Data_balance = data.data_balance
+		stock_labels = data.labels
+		console.log(stock_labels)
+
+			new Chart(document.getElementById("myChart"), {
+		    type: 'pie',
+		    data: {
+		      labels: stock_labels,
+		      datasets: [{
+		        label: "Population (millions)",
+		        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+		        data: Data_balance
+		      }]
+		    },
+		    options: {
+		      title: {
+		        display: true,
+		        text: 'Invested Amount in ₹'
+		      }
+		    }
+		}); 
+	},
+
+	complete: function() {
+		$("#loader").hide();
+	}
+
+})
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container"><h2>Balance Sheet</h2></div>
+<div class="d-flex justify-content-between">
+<div class="d-inline-flex p-3">
+<table class="table">
+<tbody>
+    <tr><th>Total Worth</th><td><strong>&#8377; {{ total }}</strong></td></tr>
+    <tr><th>Latest Worth</th><td><strong>&#8377; {{ latest }}</strong></td></tr>
+    {% if latest > total %}
+    <tr class="text-success"><th>Profit</th><td><strong>&#8377; {{ loss_profit }}({{ percent }}%)</strong></td></tr>
+    {% else %}
+    <tr class="text-danger"><th>Loss</th><td><strong>&#8377; {{ loss_profit }}({{ percent }}%)</strong></td></tr>
+    {% endif %}
+</tbody>
+</table>
+</div>
+
+<div class="d-inline-flex p-2">
+  <canvas id="myChart" width="300" height="400"></canvas>
+</div>
+<div></div>
+</div>
+{% endblock %}

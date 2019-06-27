@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{%block title%}Portfolio{%endblock%}
+
+{% block content %}
+
+{% if not stocks %}
+<h3>You have not added any stock!</h3>
+<h5><a href="{% url 'homepage' %}">Add stock to your portfolio</a></h5>
+{% endif %}
+<div class="d-flex align-content-start flex-wrap">
+  {% for stock in stocks %}
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ stock.stock_name }}</h5>
+      <p class="card-text">{{ stock.stock_date }}</p>
+
+      <ul class="list-group list-group-flush">
+	  <li class="list-group-item">Quantity=<strong>{{ stock.stock_quant }}</li></strong>
+	  <li class="list-group-item">Total Investment Amount=<strong>&#8377;{{ stock.stock_final_amount }}</li></strong>
+	  <div class="text-right">
+       <a href="{% url 'details' stock.slug %}" class="btn btn-primary">View Details</a>
+      </div>
+	  </ul>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{%block title%}Portfolio{%endblock%}
+
+{% block jquery %}
+
+<script>
+  $( function() {
+    $( "#id_stock_date" ).datepicker({
+      dateFormat: 'yy-mm-dd'
+    });
+  } );
+</script>
+
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <h3>Hi {{ user.username }}</h3><br>
+
+    <!-- <form method="post">
+      {% csrf_token %}
+      <table>
+        <tr>
+          {{ form }}
+        </tr>
+      </table>
+      <input type="submit" value="Add to this portfolio" class="btn btn-primary">
+    </form>
+    <br> -->
+    <form method="post">
+      {% csrf_token %}
+      (use <a href="https://in.finance.yahoo.com/" target="_blank">Yahoo Finance</a> quote name)
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">{{ form }}</li>
+      </ol>
+    </nav>
+    <input type="submit" value="Add to this portfolio" class="btn btn-primary">
+    </form>
+<br>
+<form>
+{% if stocks %}
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Name</th>
+<th>Shares Owned</th>
+<th>Total Amount(&#8377;)</th>
+<th>Date Invested</th>
+<!-- <th>Shares owned</th>
+<th>Last price</th>
+<th>Money invested</th>
+<th>Current value</th>
+<th>Profit</th> -->
+</tr>
+</thead>
+
+<tbody>
+
+{% for stock in stocks %}
+<tr>
+<td><strong><a href="https://in.finance.yahoo.com/quote/{{ stock.stock_name }}" target="_blank">{{ stock.stock_name }}</a></strong></td>
+<td>{{ stock.stock_quant }}</td>
+<td>{{ stock.stock_final_amount }}</td>
+<td>{{ stock.stock_date }}</td>
+<td>
+<div class="btn-group">
+    <a class="btn btn-danger btn-sm" href="{% url 'delete' stock.slug %}">Delete</a>
+    <a class="btn btn-dark btn-sm" href="{% url 'edit' stock.slug %}">Edit</a>
+    <a class="btn btn-primary btn-sm" href="{% url 'details' stock.slug %}">Details</a>
+</div>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+</form>
+{% endif %}
+{% endblock %}
