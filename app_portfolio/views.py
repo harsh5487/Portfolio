@@ -14,33 +14,36 @@ from django.views.generic import TemplateView
 @login_required
 def homepage(request):
 	if request.method == 'POST':
-		form = StockForm(request.POST or None)
-		if form.is_valid():
-			# def check(ticker,dat):
-			# 	cb = yahoo_financials.get_historical_price_data(dat, dat, 'weekly')
-			# 	final_cb=round(cb[ticker]['prices'][0]['close'],2)
-			# 	return final_cb
+		try:
+			form = StockForm(request.POST or None)
+			if form.is_valid():
+				# def check(ticker,dat):
+				# 	cb = yahoo_financials.get_historical_price_data(dat, dat, 'weekly')
+				# 	final_cb=round(cb[ticker]['prices'][0]['close'],2)
+				# 	return final_cb
 
-			ticker=request.POST.get('stock_name', None)
-			yahoo_financials = YahooFinancials(ticker)
-			dat=request.POST.get('stock_date', None)
-			cb = yahoo_financials.get_historical_price_data(dat, dat, 'weekly')
-			curr_ency = cb[ticker]['currency']
-			final_cb=round(cb[ticker]['prices'][0]['close'],2)
-			quant=int(request.POST.get('stock_quant', None))
-			final = final_cb*quant
-			cb=final_cb
-			data=final
-			obj = form.save(commit=False)
-			obj.user = request.user
-			obj.stock_currency = curr_ency
-			obj.save()
-			#messages.success(request, ('Stock is added!'))
-			form = StockForm()
-			stocks = Stock.objects.filter(user=request.user)
-			#messages.success(request, ('Stock is added!'))
-			return redirect('homepage')
-			# return render(request,'stocks.html',{ 'stocks':stocks, 'cb':cb, 'data':data })
+				ticker=request.POST.get('stock_name', None)
+				yahoo_financials = YahooFinancials(ticker)
+				dat=request.POST.get('stock_date', None)
+				cb = yahoo_financials.get_historical_price_data(dat, dat, 'weekly')
+				curr_ency = cb[ticker]['currency']
+				final_cb=round(cb[ticker]['prices'][0]['close'],2)
+				quant=int(request.POST.get('stock_quant', None))
+				final = final_cb*quant
+				cb=final_cb
+				data=final
+				obj = form.save(commit=False)
+				obj.user = request.user
+				obj.stock_currency = curr_ency
+				obj.save()
+				#messages.success(request, ('Stock is added!'))
+				form = StockForm()
+				stocks = Stock.objects.filter(user=request.user)
+				#messages.success(request, ('Stock is added!'))
+				return redirect('homepage')
+				# return render(request,'stocks.html',{ 'stocks':stocks, 'cb':cb, 'data':data })
+		except Exception as e:
+			return redirect('500')
 	else:
 		form = StockForm()
 		stocks = Stock.objects.filter(user=request.user)
@@ -155,3 +158,6 @@ def balance_sheet(request):
 	except Exception as e:
 		pass
 	return render(request,'balance.html', {'stocks': stocks, 'total':total, 'latest':round(latest,2), 'loss_profit':loss_profit, 'percent': round(percent,2)})
+
+def server_error(request):
+	redirect('500')

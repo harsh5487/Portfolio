@@ -54,5 +54,5 @@ class Stock(models.Model):
     def save(self):
         self.stock_cb = self.get_stock_cb
         self.stock_final_amount = self.get_stock_cb*float(self.stock_quant)
-        self.slug = slugify(self.stock_name + '-' + (self.stock_date).strftime("%Y-%m-%d") + '-' + str(self.user_id))
+        self.slug = slugify(self.stock_name + '-' + (self.stock_date).strftime("%Y-%m-%d") + '-' + str(self.user_id) + '-' + str(self.stock_quant))
         super(Stock, self).save()
