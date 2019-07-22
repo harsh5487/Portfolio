@@ -8,23 +8,19 @@ from . models import Stock
 from django.contrib.auth.decorators import login_required
 from yahoofinancials import YahooFinancials
 from django.views.generic import TemplateView
-# from django.views.decorators.cache import cache_page
-
+import time
+import timeout_decorator
 
 @login_required
+@timeout_decorator.timeout(5)
 def homepage(request):
 	if request.method == 'POST':
-		try:
-			form = StockForm(request.POST or None)
-			if form.is_valid():
-				# def check(ticker,dat):
-				# 	cb = yahoo_financials.get_historical_price_data(dat, dat, 'weekly')
-				# 	final_cb=round(cb[ticker]['prices'][0]['close'],2)
-				# 	return final_cb
-
-				ticker=request.POST.get('stock_name', None)
-				yahoo_financials = YahooFinancials(ticker)
-				dat=request.POST.get('stock_date', None)
+		form = StockForm(request.POST or None)
+		if form.is_valid():
+			ticker=request.POST.get('stock_name', None)
+			yahoo_financials = YahooFinancials(ticker)
+			dat=request.POST.get('stock_date', None)
+			try:
 				cb = yahoo_financials.get_historical_price_data(dat, dat, 'weekly')
 				curr_ency = cb[ticker]['currency']
 				final_cb=round(cb[ticker]['prices'][0]['close'],2)
@@ -41,9 +37,8 @@ def homepage(request):
 				stocks = Stock.objects.filter(user=request.user)
 				#messages.success(request, ('Stock is added!'))
 				return redirect('homepage')
-				# return render(request,'stocks.html',{ 'stocks':stocks, 'cb':cb, 'data':data })
-		except Exception as e:
-			return redirect('500')
+			except Exception as e:
+				return redirect('500')
 	else:
 		form = StockForm()
 		stocks = Stock.objects.filter(user=request.user)
@@ -159,5 +154,5 @@ def balance_sheet(request):
 		pass
 	return render(request,'balance.html', {'stocks': stocks, 'total':total, 'latest':round(latest,2), 'loss_profit':loss_profit, 'percent': round(percent,2)})
 
-def server_error(request):
-	redirect('500')
+# def server_error(request):
+# 	return redirect('500')

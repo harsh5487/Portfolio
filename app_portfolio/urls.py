@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.urls import path,include
-
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
@@ -16,7 +15,7 @@ urlpatterns = [
     path('balance_sheet_data/' , views.balance_sheet_data, name='balance_sheet_data'),
     path('balance_sheet/' , views.balance_sheet, name='balance_sheet'),
     path('sell/<slug:slug>' , views.sell, name='sell'),
-    path('500_server_error/' , views.server_error, name='500'),
+    path('500_server_error/' , TemplateView.as_view(template_name="500.html") , name='500'),
  #   path('name/', views.get_name, name='get_name'),
 ]
 

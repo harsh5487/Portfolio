@@ -3,6 +3,8 @@
 {% block title %}Error!{% endblock %}
 
 {% block content %}
-<h2>Enter a valid Stock name or Date.</h2>
+<form method="post">
+<h2>Enter a Valid Stock name or Date.</h2>
 <a class="btn btn-primary btn-sm" href="{% url 'homepage' %}">Home</a>
+</form>
 {% endblock content %}
